@@ -1,0 +1,41 @@
+version: '3.5'
+
+services:
+  db:
+    image: postgres:13
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    container_name: postgres
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - '5431:5432'
+
+  api:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: BcHeatmaps-api
+    environment:
+      - PORT=${PORT}
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    volumes:
+      - ./src:/app/src # This volume mounts the source code into the container
+      - ./:/app # Assuming your entire backend app needs to be reflected in the container
+      - /app/node_modules # This ensures the container's node_modules are not overwritten by the host's
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    container_name: bcheatmaps-pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=pgadmin4
+    ports:
+      - '5050:80'
+    depends_on:
+      - db
