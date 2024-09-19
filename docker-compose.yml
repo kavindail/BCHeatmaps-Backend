@@ -18,15 +18,15 @@ services:
       dockerfile: Dockerfile
     container_name: BcHeatmaps-api
     environment:
-      - PORT=${PORT}
+      - PORT=3000
     ports:
       - '3000:3000'
     depends_on:
       - db
     volumes:
-      - ./src:/app/src # This volume mounts the source code into the container
-      - ./:/app # Assuming your entire backend app needs to be reflected in the container
-      - /app/node_modules # This ensures the container's node_modules are not overwritten by the host's
+      - ./src:/app/src
+      - ./:/app
+      - /app/node_modules
 
   pgadmin:
     image: dpage/pgadmin4
