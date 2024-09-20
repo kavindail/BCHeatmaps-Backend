@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3.7'
 
 services:
   db:
@@ -10,7 +10,7 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql/data
     ports:
-      - '5431:5432'
+      - '5432:5432'
 
   api:
     build:
