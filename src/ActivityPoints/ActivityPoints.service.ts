@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ActivityPoints } from './ActivityPoints.entity';
+import * as path from 'path';
+import * as fs from 'fs';
 
 @Injectable()
 export class ActivityPointsService {
@@ -34,5 +36,24 @@ export class ActivityPointsService {
     });
     console.log('Acitivty Points sucesfully added to db');
     return this.activityPointsRepository.save(activityPoints);
+  }
+
+  async readTextFile(file, callback) {
+    var rawFile = new XMLHttpRequest();
+    rawFile.overrideMimeType('application/json');
+    rawFile.open('GET', file, true);
+    rawFile.onreadystatechange = function () {
+      if (rawFile.readyState == 4 && rawFile.status == 200) {
+        callback(rawFile.responseText);
+      }
+    };
+    rawFile.send(null);
+  }
+
+  async getActivityFromJson() {
+    const filePath = path.join(process.cwd(), './repliersPoints.json');
+    const words = fs.readFileSync(filePath, 'utf-8').toString();
+    console.log(words);
+    return words;
   }
 }
