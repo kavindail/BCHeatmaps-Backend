@@ -45,20 +45,9 @@ export class ActivityPointsController {
     }
   }
 
-  @Get('/getJson')
-  async getJsonData(@Res() res: Response) {
-    try {
-      const jsonData = this.activityPointsService.getActivityFromJson();
-      if (!jsonData) {
-        return res
-          .status(HttpStatus.BAD_REQUEST)
-          .json({ message: 'Failed to parse json data' });
-      }
-      return res.status(HttpStatus.CREATED).json(jsonData);
-    } catch (error) {
-      return res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: 'Internal server error' });
-    }
+  @Get('/activeCoordinates')
+  async getActiveCoordinates(@Res() res: Response) {
+    const fullJson = await this.activityPointsService.getActivityFromJson();
+    return res.status(HttpStatus.CREATED).json(fullJson);
   }
 }

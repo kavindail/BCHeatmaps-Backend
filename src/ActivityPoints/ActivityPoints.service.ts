@@ -52,8 +52,36 @@ export class ActivityPointsService {
 
   async getActivityFromJson() {
     const filePath = path.join(process.cwd(), './repliersPoints.json');
-    const words = fs.readFileSync(filePath, 'utf-8').toString();
-    console.log(words);
-    return words;
+    const fullJson = fs.readFileSync(filePath, 'utf-8').toString();
+
+    const activeCoords = await JSON.parse(fullJson);
+    for (let i = 0; i < activeCoords.boards.length; i++) {
+      let boards = activeCoords.boards[i];
+      for (let j = 0; j < boards.classes.length; j++) {
+        let classes = boards.classes[j];
+        if (classes.name == 'residential') {
+          for (let k = 0; k < classes.areas.length; k++) {
+            let areas = classes.areas[k];
+            for (let m = 0; m < areas.cities.length; m++) {
+              let cities = areas.cities[m];
+              let activeCount = cities.activeCount;
+              if (cities.state == 'Ontario' && activeCount > 0) {
+                for (let l = 0; l < cities.neighborhoods.length; l++) {
+                  let neighborhoods = cities.neighborhoods[l];
+                  console.log(neighborhoods.name);
+                  const latitude = neighborhoods.location['lat'];
+                  const longitude = neighborhoods.location['lng'];
+                  console.log(
+                    'latitude: ' + latitude + ' longitude: ' + longitude,
+                  );
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return fullJson;
   }
 }
