@@ -45,9 +45,22 @@ export class ActivityPointsController {
     }
   }
 
-  @Get('/activeCoordinates')
-  async getActiveCoordinates(@Res() res: Response) {
+  @Post('/activeCoordinates')
+  async recalculateJsonActivityPoints(@Res() res: Response) {
     const fullJson = await this.activityPointsService.getActivityFromJson();
     return res.status(HttpStatus.CREATED).json(fullJson);
+  }
+
+  @Delete()
+  async clearPointData(@Res() res: Response) {
+    if (this.activityPointsService.clearDatabase()) {
+      return res
+        .status(HttpStatus.CREATED)
+        .json('Sucesfully cleared the database');
+    } else {
+      return res
+        .status(HttpStatus.SERVICE_UNAVAILABLE)
+        .json('Failed to clear the database');
+    }
   }
 }

@@ -30,6 +30,8 @@ curl --request GET \
  --header 'REPLIERS-API-KEY: d1E4q131b04XKIDlQ9A0WhhSu9asDG' \
  --header 'accept: application/json'
 
-curl -X GET http://localhost:3000/activityPoints/getJson | jq .
+curl -X POST http://localhost:3000/activityPoints/activeCoordinates | jq .
 
-curl -X GET http://localhost:3000/activityPoints/activeCoordinates | jq .
+curl -X GET http://localhost:3000/activityPoints | jq .
+
+curl -X DELETE http://localhost:3000/activityPoints | jq .

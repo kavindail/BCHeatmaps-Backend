@@ -53,8 +53,8 @@ export class ActivityPointsService {
   async getActivityFromJson() {
     const filePath = path.join(process.cwd(), './repliersPoints.json');
     const fullJson = fs.readFileSync(filePath, 'utf-8').toString();
-
     const activeCoords = await JSON.parse(fullJson);
+
     for (let i = 0; i < activeCoords.boards.length; i++) {
       let boards = activeCoords.boards[i];
       for (let j = 0; j < boards.classes.length; j++) {
@@ -66,13 +66,37 @@ export class ActivityPointsService {
               let cities = areas.cities[m];
               let activeCount = cities.activeCount;
               if (cities.state == 'Ontario' && activeCount > 0) {
+                console.log('city name:' + cities.name);
+                const cityLatitude = cities.location['lat'];
+                const cityLongitude = cities.location['lng'];
+                let cityPoint = new ActivityPoints(cityLatitude, cityLongitude);
+                await this.create(cityPoint);
+
+                console.log(
+                  'city latitude: ' +
+                    cityLatitude +
+                    'city longitude: ' +
+                    cityLongitude,
+                );
+
                 for (let l = 0; l < cities.neighborhoods.length; l++) {
                   let neighborhoods = cities.neighborhoods[l];
-                  console.log(neighborhoods.name);
-                  const latitude = neighborhoods.location['lat'];
-                  const longitude = neighborhoods.location['lng'];
+
+                  console.log('neighbourhood name:' + neighborhoods.name);
+                  const neighborhoodLongitude = neighborhoods.location['lat'];
+                  const neighborhoodLatitude = neighborhoods.location['lng'];
+
+                  let neighbourhoodPoint = new ActivityPoints(
+                    neighborhoodLatitude,
+                    neighborhoodLongitude,
+                  );
+                  await this.create(neighbourhoodPoint);
+
                   console.log(
-                    'latitude: ' + latitude + ' longitude: ' + longitude,
+                    'neighborhood latitude: ' +
+                      neighborhoodLatitude +
+                      'neighborhood longitude: ' +
+                      neighborhoodLongitude,
                   );
                 }
               }
@@ -83,5 +107,13 @@ export class ActivityPointsService {
     }
 
     return fullJson;
+  }
+
+  async clearDatabase() {
+    if (this.activityPointsRepository.clear()) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
