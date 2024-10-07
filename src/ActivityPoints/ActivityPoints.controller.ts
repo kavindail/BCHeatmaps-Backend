@@ -19,8 +19,8 @@ export class ActivityPointsController {
 
   @Get()
   async getActivityPoints(@Res() res: Response) {
-    console.log('Testing api call');
     let activityPoints = await this.activityPointsService.findAll();
+    console.log(activityPoints);
 
     return res.status(HttpStatus.OK).json(activityPoints);
   }
