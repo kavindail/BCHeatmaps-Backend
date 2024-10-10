@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppService } from './app.service';
 import { ActivityPointsModule } from './ActivityPoints/ActivityPoints.module';
 import { ActivityPoints } from './ActivityPoints/ActivityPoints.entity';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 const defaultValues = {
   username: 'postgres',
@@ -51,6 +53,8 @@ try {
       autoLoadEntities: true,
     }),
     ActivityPointsModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
