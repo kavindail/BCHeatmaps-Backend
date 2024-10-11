@@ -1,12 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { JwtService } from '@nestjs/jwt';
+// import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService,
+    // private jwtService: JwtService,
   ) {}
 
   async signup() {
@@ -14,7 +14,7 @@ export class AuthService {
     // Check users credentials from the user service
   }
 
-  async signIn() {
+  async signIn(username: string, password: string) {
     // TODO: Check if the user's credentials match up with credentials stored
     // Check users credentials from the user service
   }
@@ -22,5 +22,6 @@ export class AuthService {
   async sendJWTToken() {
     //TODO: Send the user a new jwt token that they will store
     //Use nestjwt module
+    //Once the user signs in send them an http only cookie with the jwtToken included
   }
 }
