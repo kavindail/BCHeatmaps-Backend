@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './users.entity';
 import * as argon2 from 'argon2';
 
+import { HttpCode, HttpStatus } from '@nestjs/common';
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -12,18 +14,33 @@ export class UsersService {
   ) {}
 
   async createUser(uname: string, pass: string) {
-    //TODO: Add error checking here
-    let username = uname;
-    let password = pass;
+    if (uname === '' || pass === '') {
+      console.log('Username or password empty');
+      return HttpStatus.BAD_REQUEST;
+    }
 
-    const saltRounds = 10;
-    const hashedPassword = argon2.hash(password);
+    let username: string = uname;
+    let password: string = pass;
 
-    const user = this.userRepository.create({
-      username,
-      password,
-    });
-    return this.userRepository.save(user);
+    let hashedPassword: string;
+    try {
+      hashedPassword = await argon2.hash(password);
+    } catch (error) {
+      console.log('Error hashing password: ' + error);
+      return HttpStatus.BAD_REQUEST;
+    }
+
+    try {
+      const user = this.userRepository.create({
+        username,
+        password: hashedPassword,
+      });
+      await this.userRepository.save(user);
+      return HttpStatus.CREATED;
+    } catch (error) {
+      console.log('Error saving new user account: ' + error);
+      return HttpStatus.BAD_REQUEST;
+    }
   }
 
   async deleteUser() {
