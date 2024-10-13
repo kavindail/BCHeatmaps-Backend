@@ -13,13 +13,13 @@ export class UsersService {
     private userRepository: Repository<Users>,
   ) {}
 
-  async createUser(uname: string, pass: string) {
-    if (uname === '' || pass === '') {
-      console.log('Username or password empty');
+  async createUser(userEmail: string, pass: string) {
+    if (userEmail === '' || pass === '') {
+      console.log('Email or password empty');
       return HttpStatus.BAD_REQUEST;
     }
 
-    let username: string = uname;
+    let email: string = userEmail;
     let password: string = pass;
 
     let hashedPassword: string;
@@ -32,7 +32,7 @@ export class UsersService {
 
     try {
       const user = this.userRepository.create({
-        username,
+        email: email,
         password: hashedPassword,
       });
       await this.userRepository.save(user);
@@ -47,9 +47,28 @@ export class UsersService {
     //TODO: Use this in the auth services to delete a user
   }
 
-  async verifyUserCredentials() {
+  async verifyUserCredentials(email: string, password: string) {
     //TODO: User this in the auth service to check a users credentials
+
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email },
+        select: ['password'],
+      });
+      if (user) {
+        console.log(user.email);
+        //TODO: Now process and check if the user password matches
+        //Call verifyUserPassword and then proceed with processing
+      } else {
+        console.log('Failed to find user matching credentials');
+        return false;
+      }
+    } catch (error) {
+      console.log('Error getting user credentials' + error);
+      return false;
+    }
   }
+  async verifyUserPassword() {}
 
   async getAllUsers(): Promise<Users[]> {
     return this.userRepository.find();

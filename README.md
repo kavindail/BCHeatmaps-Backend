@@ -1,26 +1,3 @@
-## Installation
-
-```bash
-$ npm install
-```
-
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-Nest is [MIT licensed](LICENSE).
-
-## API Endpoint tests
-
 curl -X POST http://localhost:3000/activityPoints
 -H "Content-Type: application/json"
 -d '{"latitude": "4", "longitude": "5"}'
@@ -35,3 +12,7 @@ curl -X POST http://localhost:3000/activityPoints/activeCoordinates | jq .
 curl -X GET http://localhost:3000/activityPoints | jq .
 
 curl -X DELETE http://localhost:3000/activityPoints | jq .
+
+curl -X POST http://localhost:3000/signup \
+-H "Content-Type: application/json" \
+-d '{"email": "testUser@email.com", "password": "testPassword"}'

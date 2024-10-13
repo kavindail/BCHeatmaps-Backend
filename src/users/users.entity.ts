@@ -15,9 +15,9 @@ export class Users {
   uuid: number;
 
   @Column({ nullable: false, unique: true })
-  username: string;
+  email: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, select: false })
   password: string;
 
   @Column({ nullable: true })
