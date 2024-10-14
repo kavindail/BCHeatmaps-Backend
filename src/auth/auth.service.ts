@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-// import { JwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -22,9 +22,13 @@ export class AuthService {
   }
 
   async signIn(email: string, password: string) {
-    const verified = this.usersService.verifyUserCredentials(email, password);
+    const verified = await this.usersService.verifyUserCredentials(
+      email,
+      password,
+    );
     if (verified) {
-      //TODO: Generate JWT Token and return to the user
+      //TODO: Generate JWT Token with generateJWTToken
+      //Then send with sendJWTToken
       return;
     } else {
       return HttpStatus.BAD_REQUEST;
@@ -38,8 +42,13 @@ export class AuthService {
     //TODO: check if the user credential matches up with the database
   }
 
+  async generateJWTToken(user) {
+    //TODO: Generate the JWT Token and return it
+    //Store this in the database also for the user specified
+    //Use NestJWT
+  }
+
   async sendJWTToken() {
-    //TODO: Send the user a new jwt token that they will store
-    //Use nestjwt module
+    //TODO: Send the jwt token in the form of an http only cookie
   }
 }

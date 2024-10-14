@@ -47,7 +47,7 @@ export class UsersService {
     //TODO: Use this in the auth services to delete a user
   }
 
-  async verifyUserCredentials(email: string, password: string) {
+  async verifyUserCredentials(email: string, enteredPassword: string) {
     //TODO: User this in the auth service to check a users credentials
 
     try {
@@ -57,8 +57,12 @@ export class UsersService {
       });
       if (user) {
         console.log(user.email);
-        //TODO: Now process and check if the user password matches
-        //Call verifyUserPassword and then proceed with processing
+        if (await this.verifyUserPassword(enteredPassword, user.password)) {
+          return true;
+        } else {
+          console.log('User password was incorrect');
+          return false;
+        }
       } else {
         console.log('Failed to find user matching credentials');
         return false;
@@ -68,7 +72,16 @@ export class UsersService {
       return false;
     }
   }
-  async verifyUserPassword() {}
+  async verifyUserPassword(
+    enteredPassword: string,
+    storedHashedPassword: string,
+  ) {
+    if (await argon2.verify(enteredPassword, storedHashedPassword)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   async getAllUsers(): Promise<Users[]> {
     return this.userRepository.find();
