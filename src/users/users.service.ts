@@ -14,6 +14,8 @@ export class UsersService {
   ) {}
 
   async createUser(userEmail: string, pass: string) {
+    console.log(userEmail);
+    console.log(pass);
     if (userEmail === '' || pass === '') {
       console.log('Email or password empty');
       return HttpStatus.BAD_REQUEST;

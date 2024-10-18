@@ -6,10 +6,12 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    // private jwtService: JwtService,
+    private jwtService: JwtService,
   ) {}
 
   async signup(email: string, password: string) {
+    console.log('email in auth service' + email);
+    console.log('passowrd in auth service' + password);
     //TODO: Process the email here with regex to verify
     //it is a valid email before sending it on to the function
     try {
@@ -22,12 +24,20 @@ export class AuthService {
   }
 
   async signIn(email: string, password: string) {
+    let payload = {
+      email2: email,
+      password3: password,
+    };
     const verified = await this.usersService.verifyUserCredentials(
       email,
       password,
     );
     // console.log('Verified: ' + verified);
     if (verified) {
+      const jwtToken = await this.generateJWTToken(payload);
+      console.log('JWT Token returned is: ' + jwtToken);
+      const verifiedPayload = await this.verifyJWTToken(jwtToken);
+      console.log('Verified payload is : ' + verifiedPayload);
       return HttpStatus.OK;
     } else {
       return HttpStatus.UNAUTHORIZED;
@@ -37,17 +47,29 @@ export class AuthService {
   async getAllUsers() {
     return this.usersService.getAllUsers();
   }
-  async verifyJWTToken() {
-    //TODO: check if the user credential matches up with the database
+  async verifyJWTToken(signedPayload) {
+    console.log('Signed payload being verified: ' + signedPayload);
+    let decodedPayload = await this.jwtService.verify(signedPayload, {
+      secret: 'test',
+    });
+    //TODO: Implement error checking here
+    //Decoded payload will error if the signature payload cannot be verified correctly
+    console.log('decoded payload');
+    console.log(decodedPayload);
   }
 
-  async generateJWTToken(user) {
-    //TODO: Generate the JWT Token and return it
-    //Store this in the database also for the user specified
-    //Use NestJWT
+  async generateJWTToken(payload) {
+    let signedPayload = await this.jwtService.signAsync(payload);
+    console.log('Payload signed:  ' + signedPayload);
+    return signedPayload;
   }
 
   async sendJWTToken() {
     //TODO: Send the jwt token in the form of an http only cookie
+  }
+
+  async storeJWTToken() {
+    //TODO: Store the jwt token created into the user entity
+    //Need to change the user entity to have an expiry time
   }
 }

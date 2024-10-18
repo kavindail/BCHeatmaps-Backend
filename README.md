@@ -13,6 +13,6 @@ curl -X GET http://localhost:3000/activityPoints | jq .
 
 curl -X DELETE http://localhost:3000/activityPoints | jq .
 
-curl -X POST http://localhost:3000/signup \
+curl -X POST http://localhost:3000/auth/signup \
 -H "Content-Type: application/json" \
 -d '{"email": "testUser@email.com", "password": "testPassword"}'

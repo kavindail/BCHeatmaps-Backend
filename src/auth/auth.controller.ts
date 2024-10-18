@@ -19,6 +19,7 @@ export class AuthController {
 
   @Post('signup')
   signUp(@Body() userDetails: UserDetails) {
+    console.log(userDetails);
     console.log('POST Call made to /auth/signup');
     return this.authService.signup(userDetails.email, userDetails.password);
   }
