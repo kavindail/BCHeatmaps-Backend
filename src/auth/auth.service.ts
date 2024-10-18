@@ -26,12 +26,11 @@ export class AuthService {
       email,
       password,
     );
+    // console.log('Verified: ' + verified);
     if (verified) {
-      //TODO: Generate JWT Token with generateJWTToken
-      //Then send with sendJWTToken
-      return;
+      return HttpStatus.OK;
     } else {
-      return HttpStatus.BAD_REQUEST;
+      return HttpStatus.UNAUTHORIZED;
     }
   }
 

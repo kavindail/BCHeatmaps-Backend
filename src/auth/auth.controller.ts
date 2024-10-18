@@ -32,7 +32,9 @@ export class AuthController {
 
   @Post('login')
   signIn(@Body() userDetails: UserDetails) {
-    console.log('Get Call made to /auth');
+    console.log('Post Call made to /auth/login');
+    console.log(userDetails);
+
     return this.authService.signIn(userDetails.email, userDetails.password);
   }
 }

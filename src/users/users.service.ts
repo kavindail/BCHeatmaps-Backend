@@ -48,15 +48,12 @@ export class UsersService {
   }
 
   async verifyUserCredentials(email: string, enteredPassword: string) {
-    //TODO: User this in the auth service to check a users credentials
-
     try {
       const user = await this.userRepository.findOne({
         where: { email },
-        select: ['password'],
+        select: ['password', 'email'],
       });
       if (user) {
-        console.log(user.email);
         if (await this.verifyUserPassword(enteredPassword, user.password)) {
           return true;
         } else {
@@ -76,7 +73,9 @@ export class UsersService {
     enteredPassword: string,
     storedHashedPassword: string,
   ) {
-    if (await argon2.verify(enteredPassword, storedHashedPassword)) {
+    // console.log('Entered password: ' + enteredPassword);
+    // console.log('Stored hashed password: ' + storedHashedPassword);
+    if (await argon2.verify(storedHashedPassword, enteredPassword)) {
       return true;
     } else {
       return false;
