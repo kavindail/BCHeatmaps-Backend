@@ -37,7 +37,8 @@ export class AuthService {
       const jwtToken = await this.generateJWTToken(payload);
       console.log('JWT Token returned is: ' + jwtToken);
       const verifiedPayload = await this.verifyJWTToken(jwtToken);
-      console.log('Verified payload is : ' + verifiedPayload);
+      console.log('Verified JWT Token: ' + verifiedPayload);
+      const stored = await this.storeJWTToken(email, jwtToken);
       return HttpStatus.OK;
     } else {
       return HttpStatus.UNAUTHORIZED;
@@ -68,7 +69,8 @@ export class AuthService {
     //TODO: Send the jwt token in the form of an http only cookie
   }
 
-  async storeJWTToken() {
+  async storeJWTToken(user, jwtToken) {
+    this.usersService.storeJWTToken();
     //TODO: Store the jwt token created into the user entity
     //Need to change the user entity to have an expiry time
   }

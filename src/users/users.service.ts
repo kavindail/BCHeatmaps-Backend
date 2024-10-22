@@ -87,4 +87,7 @@ export class UsersService {
   async getAllUsers(): Promise<Users[]> {
     return this.userRepository.find();
   }
+  async storeJWTToken(userEmail, jwtTokenEncoded) {
+    return this.userRepository.save();
+  }
 }
