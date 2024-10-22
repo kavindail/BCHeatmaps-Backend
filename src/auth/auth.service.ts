@@ -36,8 +36,8 @@ export class AuthService {
     if (verified) {
       const jwtToken = await this.generateJWTToken(payload);
       console.log('JWT Token returned is: ' + jwtToken);
-      const verifiedPayload = await this.verifyJWTToken(jwtToken);
-      console.log('Verified JWT Token: ' + verifiedPayload);
+      // const verifiedPayload = await this.verifyJWTToken(jwtToken);
+      // console.log('Verified JWT Token: ' + verifiedPayload);
       const stored = await this.storeJWTToken(email, jwtToken);
       return HttpStatus.OK;
     } else {
@@ -49,9 +49,12 @@ export class AuthService {
     return this.usersService.getAllUsers();
   }
   async verifyJWTToken(signedPayload) {
+    const jwtSecret: Partial<typeof defaultValues> = JSON.parse(
+      process.env.JWT_SECRET || '{}',
+    );
     console.log('Signed payload being verified: ' + signedPayload);
     let decodedPayload = await this.jwtService.verify(signedPayload, {
-      secret: 'test',
+      secret: jwtSecret,
     });
     //TODO: Implement error checking here
     //Decoded payload will error if the signature payload cannot be verified correctly
@@ -69,9 +72,7 @@ export class AuthService {
     //TODO: Send the jwt token in the form of an http only cookie
   }
 
-  async storeJWTToken(user, jwtToken) {
-    this.usersService.storeJWTToken();
-    //TODO: Store the jwt token created into the user entity
-    //Need to change the user entity to have an expiry time
+  async storeJWTToken(email, jwtToken) {
+    await this.usersService.storeJWTToken(email, jwtToken);
   }
 }

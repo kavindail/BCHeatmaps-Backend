@@ -55,6 +55,7 @@ export class UsersService {
         where: { email },
         select: ['password', 'email'],
       });
+
       if (user) {
         if (await this.verifyUserPassword(enteredPassword, user.password)) {
           return true;
@@ -88,6 +89,18 @@ export class UsersService {
     return this.userRepository.find();
   }
   async storeJWTToken(userEmail, jwtTokenEncoded) {
-    return this.userRepository.save();
+    try {
+      let user = await this.getUserFromEmail(userEmail);
+      user.jwtToken = jwtTokenEncoded;
+      return this.userRepository.save(user);
+    } catch (error) {
+      console.log('Error storing JWT Token: ' + error);
+    }
+  }
+
+  async getUserFromEmail(email) {
+    return await this.userRepository.findOne({
+      where: { email: email },
+    });
   }
 }
