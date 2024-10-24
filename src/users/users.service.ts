@@ -76,8 +76,6 @@ export class UsersService {
     enteredPassword: string,
     storedHashedPassword: string,
   ) {
-    // console.log('Entered password: ' + enteredPassword);
-    // console.log('Stored hashed password: ' + storedHashedPassword);
     if (await argon2.verify(storedHashedPassword, enteredPassword)) {
       return true;
     } else {

@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import * as dotenv from 'dotenv';
 
 @Injectable()
 export class AuthService {
@@ -9,24 +10,28 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  isValidEmail(email: string) {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailPattern.test(email);
+  }
+
   async signup(email: string, password: string) {
-    console.log('email in auth service' + email);
-    console.log('passowrd in auth service' + password);
-    //TODO: Process the email here with regex to verify
-    //it is a valid email before sending it on to the function
     try {
-      const user = await this.usersService.createUser(email, password);
-      return user;
+      if (!this.isValidEmail(email)) {
+        return HttpStatus.BAD_REQUEST;
+      }
+      const status = await this.usersService.createUser(email, password);
+      return status;
     } catch (error) {
-      console.log('Error on user signup in AuthService');
+      console.log('User signup error: ' + error);
       return HttpStatus.BAD_REQUEST;
     }
   }
 
   async signIn(email: string, password: string) {
     let payload = {
-      email2: email,
-      password3: password,
+      email: email,
+      expiryTime: Math.floor(Date.now() / 5000) + 60 * 60,
     };
     const verified = await this.usersService.verifyUserCredentials(
       email,
@@ -35,10 +40,10 @@ export class AuthService {
     // console.log('Verified: ' + verified);
     if (verified) {
       const jwtToken = await this.generateJWTToken(payload);
-      console.log('JWT Token returned is: ' + jwtToken);
+      await this.storeJWTToken(email, jwtToken);
+      // console.log('JWT Token returned is: ' + jwtToken);
       // const verifiedPayload = await this.verifyJWTToken(jwtToken);
       // console.log('Verified JWT Token: ' + verifiedPayload);
-      const stored = await this.storeJWTToken(email, jwtToken);
       return HttpStatus.OK;
     } else {
       return HttpStatus.UNAUTHORIZED;
@@ -49,17 +54,17 @@ export class AuthService {
     return this.usersService.getAllUsers();
   }
   async verifyJWTToken(signedPayload) {
-    const jwtSecret: Partial<typeof defaultValues> = JSON.parse(
-      process.env.JWT_SECRET || '{}',
-    );
-    console.log('Signed payload being verified: ' + signedPayload);
-    let decodedPayload = await this.jwtService.verify(signedPayload, {
-      secret: jwtSecret,
-    });
-    //TODO: Implement error checking here
-    //Decoded payload will error if the signature payload cannot be verified correctly
-    console.log('decoded payload');
-    console.log(decodedPayload);
+    const jwtSecret = process.env.JWT_SECRET || '{}';
+    try {
+      let decodedPayload = await this.jwtService.verify(signedPayload, {
+        secret: jwtSecret,
+      });
+      console.log('decoded payload');
+      console.log(decodedPayload);
+    } catch (error) {
+      console.log('Error verifying jwt token: ' + error);
+      return HttpStatus.UNAUTHORIZED;
+    }
   }
 
   async generateJWTToken(payload) {

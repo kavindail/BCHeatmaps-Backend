@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppService } from './app.service';
 import { ActivityPointsModule } from './ActivityPoints/ActivityPoints.module';
@@ -55,6 +54,7 @@ try {
     ActivityPointsModule,
     AuthModule,
     UsersModule,
+    // ConfigModule.forRoot({ isGlobal: true }),
   ],
   controllers: [AppController],
   providers: [AppService],
