@@ -31,7 +31,7 @@ export class AuthService {
   async signIn(email: string, password: string) {
     let payload = {
       email: email,
-      expiryTime: Math.floor(Date.now() / 5000) + 60 * 60,
+      // expiryTime: Math.floor(Date.now() / 5000) + 60 * 60,
     };
     const verified = await this.usersService.verifyUserCredentials(
       email,
@@ -39,11 +39,8 @@ export class AuthService {
     );
     if (verified) {
       const jwtToken = await this.generateJWTToken(payload);
-      //This stores the jwt token in the database for the specified user
       await this.storeJWTToken(email, jwtToken);
-      // console.log('JWT Token returned is: ' + jwtToken);
-      // const verifiedPayload = await this.verifyJWTToken(jwtToken);
-      // console.log('Verified JWT Token: ' + verifiedPayload);
+      await this.verifyJWTToken(jwtToken);
       return HttpStatus.OK;
     } else {
       return HttpStatus.UNAUTHORIZED;
@@ -53,17 +50,43 @@ export class AuthService {
   async getAllUsers() {
     return this.usersService.getAllUsers();
   }
-  async verifyJWTToken(signedPayload) {
+  async verifyJWTToken(jwtToken) {
     const jwtSecret = process.env.JWT_SECRET || '{}';
     try {
-      let decodedPayload = await this.jwtService.verify(signedPayload, {
+      let decodedJwtToken = await this.jwtService.verify(jwtToken, {
         secret: jwtSecret,
       });
-      console.log('decoded payload');
-      console.log(decodedPayload);
+
+      const email = decodedJwtToken.email;
+      const expiryTime = decodedJwtToken.exp;
+      console.log('Decoded JWT Token: ');
+      console.log(decodedJwtToken);
+
+      let verifiedJWT = await this.usersService.checkJWTAgainstDB(
+        jwtToken,
+        email,
+      );
+      if (!verifiedJWT) {
+        return false;
+      }
+
+      const expiredToken = await this.checkTokenExpired(expiryTime);
+      if (expiredToken) {
+        return false;
+      }
+
+      return true;
     } catch (error) {
       console.log('Error verifying jwt token: ' + error);
       return HttpStatus.UNAUTHORIZED;
+    }
+  }
+  async checkTokenExpired(expiryTime) {
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (currentTime >= expiryTime) {
+      return true;
+    } else {
+      return false;
     }
   }
 

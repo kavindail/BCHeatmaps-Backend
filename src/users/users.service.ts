@@ -83,6 +83,12 @@ export class UsersService {
     }
   }
 
+  async checkJWTAgainstDB(jwtToken, email) {
+    return await this.userRepository.findOne({
+      where: { email: email, jwtToken: jwtToken },
+    });
+  }
+
   async getAllUsers(): Promise<Users[]> {
     return this.userRepository.find();
   }
