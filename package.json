@@ -26,6 +26,7 @@
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/typeorm": "^10.0.2",
+    "@nestjsplus/cookies": "^1.1.1",
     "argon2": "^0.41.1",
     "dotenv": "^16.4.5",
     "for": "^0.0.1-dev.0",

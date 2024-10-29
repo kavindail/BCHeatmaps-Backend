@@ -37,9 +37,9 @@ export class AuthService {
       email,
       password,
     );
-    // console.log('Verified: ' + verified);
     if (verified) {
       const jwtToken = await this.generateJWTToken(payload);
+      //This stores the jwt token in the database for the specified user
       await this.storeJWTToken(email, jwtToken);
       // console.log('JWT Token returned is: ' + jwtToken);
       // const verifiedPayload = await this.verifyJWTToken(jwtToken);

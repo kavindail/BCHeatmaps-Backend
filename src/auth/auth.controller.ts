@@ -23,6 +23,11 @@ export class AuthController {
   async signUp(@Body() userDetails: UserDetails, @Res() res: Response) {
     console.log('POST made to /auth/signup');
     console.log(userDetails);
+
+    //TODO: Rewrite this function so that signUp returns either tue or false
+    //Make the controller return the status codes and not the service
+
+    //This should return either true or false
     let status = await this.authService.signup(
       userDetails.email,
       userDetails.password,
@@ -48,7 +53,9 @@ export class AuthController {
   @Post('login')
   async signIn(@Body() userDetails: UserDetails, @Res() res: Response) {
     console.log('POST made to /auth/login');
-
+    //TODO: Rewrite this function so that signIn returns the http token
+    //Make the controller return the status codes and not the service
+    //Make the service return a null
     let status = await this.authService.signIn(
       userDetails.email,
       userDetails.password,
@@ -58,10 +65,22 @@ export class AuthController {
       res
         .status(HttpStatus.UNAUTHORIZED)
         .json({ message: 'Username or password incorrect.' });
-    } else {
-      res
+    } else if (HttpStatus.OK) {
+      //TODO: Return the actual http only token here
+      //TODO: Move this into its own function not in the controller
+      res.cookie('token', 'test-token-val', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 24 * 60 * 60 * 1000, //1 day
+      });
+      return res
         .status(HttpStatus.OK)
         .json({ message: 'User signed in succesfully.' });
+    } else {
+      res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: 'Bad request please try again.' });
     }
   }
 }
