@@ -40,10 +40,9 @@ export class AuthService {
     if (verified) {
       const jwtToken = await this.generateJWTToken(payload);
       await this.storeJWTToken(email, jwtToken);
-      await this.verifyJWTToken(jwtToken);
-      return HttpStatus.OK;
+      return jwtToken;
     } else {
-      return HttpStatus.UNAUTHORIZED;
+      return null;
     }
   }
 
@@ -59,8 +58,8 @@ export class AuthService {
 
       const email = decodedJwtToken.email;
       const expiryTime = decodedJwtToken.exp;
-      console.log('Decoded JWT Token: ');
-      console.log(decodedJwtToken);
+      // console.log('Decoded JWT Token: ');
+      // console.log(decodedJwtToken);
 
       let verifiedJWT = await this.usersService.checkJWTAgainstDB(
         jwtToken,
@@ -74,7 +73,6 @@ export class AuthService {
       if (expiredToken) {
         return false;
       }
-
       return true;
     } catch (error) {
       console.log('Error verifying jwt token: ' + error);
@@ -92,12 +90,8 @@ export class AuthService {
 
   async generateJWTToken(payload) {
     let signedPayload = await this.jwtService.signAsync(payload);
-    console.log('Payload signed:  ' + signedPayload);
+    // console.log('Payload signed:  ' + signedPayload);
     return signedPayload;
-  }
-
-  async sendJWTToken() {
-    //TODO: Send the jwt token in the form of an http only cookie
   }
 
   async storeJWTToken(email, jwtToken) {
