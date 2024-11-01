@@ -61,13 +61,7 @@ export class AuthService {
       // console.log('Decoded JWT Token: ');
       // console.log(decodedJwtToken);
 
-      let verifiedJWT = await this.usersService.checkJWTAgainstDB(
-        jwtToken,
-        email,
-      );
-      if (!verifiedJWT) {
-        return false;
-      }
+      await this.usersService.checkJWTAgainstDB(jwtToken, email);
 
       const expiredToken = await this.checkTokenExpired(expiryTime);
       if (expiredToken) {
@@ -76,7 +70,7 @@ export class AuthService {
       return true;
     } catch (error) {
       console.log('Error verifying jwt token: ' + error);
-      return HttpStatus.UNAUTHORIZED;
+      return false;
     }
   }
   async checkTokenExpired(expiryTime) {

@@ -6,9 +6,11 @@ import {
   HttpCode,
   HttpStatus,
   Res,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Response } from 'express';
+import { Request, Response } from 'express';
+import * as cookie from 'cookie';
 
 type UserDetails = {
   email: string;
@@ -54,10 +56,17 @@ export class AuthController {
   }
 
   @Post('verifyToken')
-  async verifyToken(@Body() jwt: jwtToken, @Res() res: Response) {
-    let jwtToken = jwt.jwtToken;
-    //This will either return true or false
-    let verified = this.authService.verifyJWTToken(jwtToken);
+  async verifyToken(@Req() req: Request, @Res() res: Response) {
+    console.log('POST made to /auth/verifyToken');
+    const cookies = cookie.parse(req.headers.cookie || '');
+    const jwtToken = cookies['token'];
+    console.log('JWT Token provided is');
+    console.log(jwtToken);
+    if (!jwtToken) {
+      return res.status(401).json({ message: 'No jwt token provided' });
+    }
+
+    let verified = await this.authService.verifyJWTToken(jwtToken);
     if (verified) {
       return res
         .status(HttpStatus.OK)
@@ -86,8 +95,8 @@ export class AuthController {
     } else {
       res.cookie('token', jwtToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        secure: false, //Set to true in https prod environment
+        sameSite: 'none',
         maxAge: 100 * 60 * 60 * 1000, //100 hours
       });
       return res

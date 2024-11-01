@@ -66,23 +66,23 @@ export class ActivityPointsService {
               let cities = areas.cities[m];
               let activeCount = cities.activeCount;
               if (cities.state == 'Ontario' && activeCount > 0) {
-                console.log('city name:' + cities.name);
+                // console.log('city name:' + cities.name);
                 const cityLatitude = cities.location['lat'];
                 const cityLongitude = cities.location['lng'];
                 let cityPoint = new ActivityPoints(cityLatitude, cityLongitude);
                 await this.create(cityPoint);
 
-                console.log(
-                  'city latitude: ' +
-                    cityLatitude +
-                    'city longitude: ' +
-                    cityLongitude,
-                );
+                // console.log(
+                //   'city latitude: ' +
+                //     cityLatitude +
+                //     'city longitude: ' +
+                //     cityLongitude,
+                // );
 
                 for (let l = 0; l < cities.neighborhoods.length; l++) {
                   let neighborhoods = cities.neighborhoods[l];
 
-                  console.log('neighbourhood name:' + neighborhoods.name);
+                  // console.log('neighbourhood name:' + neighborhoods.name);
                   const neighborhoodLongitude = neighborhoods.location['lat'];
                   const neighborhoodLatitude = neighborhoods.location['lng'];
 
@@ -92,12 +92,12 @@ export class ActivityPointsService {
                   );
                   await this.create(neighbourhoodPoint);
 
-                  console.log(
-                    'neighborhood latitude: ' +
-                      neighborhoodLatitude +
-                      'neighborhood longitude: ' +
-                      neighborhoodLongitude,
-                  );
+                  // console.log(
+                  //   'neighborhood latitude: ' +
+                  //     neighborhoodLatitude +
+                  //     'neighborhood longitude: ' +
+                  //     neighborhoodLongitude,
+                  // );
                 }
               }
             }

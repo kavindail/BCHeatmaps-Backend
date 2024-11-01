@@ -20,7 +20,7 @@ export class ActivityPointsController {
   @Get()
   async getActivityPoints(@Res() res: Response) {
     let activityPoints = await this.activityPointsService.findAll();
-    console.log(activityPoints);
+    // console.log(activityPoints);
 
     return res.status(HttpStatus.OK).json(activityPoints);
   }
