@@ -13,23 +13,27 @@ export class UsersService {
     private userRepository: Repository<Users>,
   ) {}
 
+  async deleteJWTToken(jwtToken) {
+    //TODO: Delete jwt token specified, the token will include the email
+    //Use this in conjuction with a logout function
+  }
+
   async createUser(userEmail: string, pass: string) {
-    console.log(userEmail);
-    console.log(pass);
+    // console.log(userEmail);
+    // console.log(pass);
     if (userEmail === '' || pass === '') {
       console.log('Email or password empty');
-      return HttpStatus.BAD_REQUEST;
+      return false;
     }
-
     let email: string = userEmail;
     let password: string = pass;
-
     let hashedPassword: string;
+
     try {
       hashedPassword = await argon2.hash(password);
     } catch (error) {
       console.log('Error hashing password: ' + error);
-      return HttpStatus.BAD_REQUEST;
+      return false;
     }
 
     try {
@@ -38,10 +42,10 @@ export class UsersService {
         password: hashedPassword,
       });
       await this.userRepository.save(user);
-      return HttpStatus.CREATED;
+      return true;
     } catch (error) {
       console.log('Error saving new user account: ' + error);
-      return HttpStatus.BAD_REQUEST;
+      return false;
     }
   }
 

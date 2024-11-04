@@ -27,24 +27,35 @@ export class AuthController {
   @Post('signup')
   async signUp(@Body() userDetails: UserDetails, @Res() res: Response) {
     console.log('POST made to /auth/signup');
-    console.log(userDetails);
 
-    //TODO: Rewrite this function so that signUp returns either tue or false
-    //Make the controller return the status codes and not the service
-
-    //This should return either true or false
+    //TODO: Instead of modifying signup just send it to login to return
     let status = await this.authService.signup(
       userDetails.email,
       userDetails.password,
     );
-    if (status === HttpStatus.BAD_REQUEST) {
+
+    //Also want to log in the user when they sign up so they can get a jwt token
+    let jwtToken = await this.authService.signIn(
+      userDetails.email,
+      userDetails.password,
+    );
+
+    if (status) {
+      res.cookie('token', jwtToken, {
+        httpOnly: true,
+        secure: false, //TODO: Set to true in https prod environment
+        sameSite: 'none', //TODO: Set to strict or lax in prod environment
+        maxAge: 100 * 60 * 60 * 1000, //100 hours
+      });
+      console.log('User created: ', status);
+      return res
+        .status(HttpStatus.CREATED)
+        .json({ message: 'User signed up succesfully.' });
+    } else {
+      console.log('User failed to create: ', status);
       res
         .status(HttpStatus.BAD_REQUEST)
         .json({ message: 'Invalid email or signup failed.' });
-    } else {
-      res
-        .status(HttpStatus.CREATED)
-        .json({ message: 'User created succesfully.' });
     }
   }
 
@@ -60,8 +71,7 @@ export class AuthController {
     console.log('POST made to /auth/verifyToken');
     const cookies = cookie.parse(req.headers.cookie || '');
     const jwtToken = cookies['token'];
-    console.log('JWT Token provided is');
-    console.log(jwtToken);
+    console.log('JWT Token provided is: ', jwtToken);
     if (!jwtToken) {
       return res.status(401).json({ message: 'No jwt token provided' });
     }
@@ -95,8 +105,8 @@ export class AuthController {
     } else {
       res.cookie('token', jwtToken, {
         httpOnly: true,
-        secure: false, //Set to true in https prod environment
-        sameSite: 'none',
+        secure: false, //TODO: Set to true in https prod environment
+        sameSite: 'none', //TODO: Set to strict or lax in prod environment
         maxAge: 100 * 60 * 60 * 1000, //100 hours
       });
       return res

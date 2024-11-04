@@ -18,25 +18,30 @@ export class AuthService {
   async signup(email: string, password: string) {
     try {
       if (!this.isValidEmail(email)) {
-        return HttpStatus.BAD_REQUEST;
+        return false;
       }
       const status = await this.usersService.createUser(email, password);
-      return status;
+      if (status) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (error) {
       console.log('User signup error: ' + error);
-      return HttpStatus.BAD_REQUEST;
+      return false;
     }
   }
 
   async signIn(email: string, password: string) {
     let payload = {
       email: email,
-      // expiryTime: Math.floor(Date.now() / 5000) + 60 * 60,
     };
+
     const verified = await this.usersService.verifyUserCredentials(
       email,
       password,
     );
+
     if (verified) {
       const jwtToken = await this.generateJWTToken(payload);
       await this.storeJWTToken(email, jwtToken);
@@ -58,8 +63,6 @@ export class AuthService {
 
       const email = decodedJwtToken.email;
       const expiryTime = decodedJwtToken.exp;
-      // console.log('Decoded JWT Token: ');
-      // console.log(decodedJwtToken);
 
       await this.usersService.checkJWTAgainstDB(jwtToken, email);
 
@@ -83,9 +86,8 @@ export class AuthService {
   }
 
   async generateJWTToken(payload) {
-    let signedPayload = await this.jwtService.signAsync(payload);
-    // console.log('Payload signed:  ' + signedPayload);
-    return signedPayload;
+    let signedJWTToken = await this.jwtService.signAsync(payload);
+    return signedJWTToken;
   }
 
   async storeJWTToken(email, jwtToken) {
