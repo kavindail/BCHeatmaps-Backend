@@ -9,6 +9,32 @@ describe('AuthController', () => {
   let authService: AuthService;
   let mockResponse: Partial<Response>;
 
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [AuthController],
+      providers: [
+        {
+          provide: AuthService,
+          // use the mock one, not real service
+          useValue: {
+            signup: jest.fn(),
+            signIn: jest.fn(),
+            getAllUsers: jest.fn(),
+          },
+        },
+      ],
+    }).compile();
+
+    authController = module.get<AuthController>(AuthController);
+    authService = module.get<AuthService>(AuthService);
+
+    // create mock response object
+    mockResponse = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+      cookie: jest.fn(),
+    };
+  });
 
   describe('signUp', () => {
     it('should return 201 and create user successfully', async () => {
@@ -32,6 +58,4 @@ describe('AuthController', () => {
     });
 
   });
-
-  
 });
