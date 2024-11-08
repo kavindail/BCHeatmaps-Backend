@@ -20,7 +20,6 @@ export class Users {
   @Column({ nullable: false, select: false })
   password: string;
 
-  //TODO: Implement an expiry time for the jwt token
   @Column({ nullable: true })
   jwtToken: string | null;
 }

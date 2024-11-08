@@ -14,8 +14,8 @@ export class UsersService {
   ) {}
 
   async deleteJWTToken(jwtToken) {
-    //TODO: Delete jwt token specified, the token will include the email
-    //Use this in conjuction with a logout function
+    // TODO: Delete jwt token specified, the token will include the email
+    // Use this in conjuction with a logout function
   }
 
   async createUser(userEmail: string, pass: string) {
@@ -53,6 +53,24 @@ export class UsersService {
     //TODO: Use this in the auth services to delete a user
   }
 
+  async getUserIdFromEmail(email: string) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email },
+      });
+
+      if (user) {
+        return user.uuid;
+      } else {
+        console.log('No user matching email');
+        return null;
+      }
+    } catch (error) {
+      console.log('Error getting user id from email' + error);
+      return null;
+    }
+  }
+
   async verifyUserCredentials(email: string, enteredPassword: string) {
     try {
       const user = await this.userRepository.findOne({
@@ -76,6 +94,7 @@ export class UsersService {
       return false;
     }
   }
+
   async verifyUserPassword(
     enteredPassword: string,
     storedHashedPassword: string,

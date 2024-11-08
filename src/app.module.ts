@@ -6,6 +6,7 @@ import { ActivityPointsModule } from './ActivityPoints/ActivityPoints.module';
 import { ActivityPoints } from './ActivityPoints/ActivityPoints.entity';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { FavoritesModule } from './Favorites/Favorites.module';
 
 const defaultValues = {
   username: 'postgres',
@@ -54,6 +55,7 @@ try {
     ActivityPointsModule,
     AuthModule,
     UsersModule,
+    FavoritesModule,
     // ConfigModule.forRoot({ isGlobal: true }),
   ],
   controllers: [AppController],

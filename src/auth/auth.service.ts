@@ -33,14 +33,17 @@ export class AuthService {
   }
 
   async signIn(email: string, password: string) {
-    let payload = {
-      email: email,
-    };
-
     const verified = await this.usersService.verifyUserCredentials(
       email,
       password,
     );
+
+    const userID = await this.usersService.getUserIdFromEmail(email);
+
+    let payload = {
+      email: email,
+      userId: userID,
+    };
 
     if (verified) {
       const jwtToken = await this.generateJWTToken(payload);
@@ -60,8 +63,8 @@ export class AuthService {
       let decodedJwtToken = await this.jwtService.verify(jwtToken, {
         secret: jwtSecret,
       });
-
       const email = decodedJwtToken.email;
+      const userID = decodedJwtToken.userID;
       const expiryTime = decodedJwtToken.exp;
 
       await this.usersService.checkJWTAgainstDB(jwtToken, email);

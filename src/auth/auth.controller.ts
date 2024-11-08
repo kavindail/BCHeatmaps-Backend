@@ -16,6 +16,7 @@ type UserDetails = {
   email: string;
   password: string;
 };
+
 type jwtToken = {
   jwtToken: string;
 };
