@@ -36,6 +36,7 @@ describe('AuthController', () => {
     };
   });
 
+  // testing authentication signUp
   describe('signUp', () => {
     it('should return 201 and create user successfully', async () => {
       const userDetails = { email: 'test@example.com', password: 'password' };
@@ -58,4 +59,22 @@ describe('AuthController', () => {
     });
 
   });
+
+  // testing authentication signIn
+  describe('signIn', () => {
+    it('should sign in successfully and return a token', async () => {
+        const userDetails = { email: 'test@example.com', password: 'password' };
+    
+        // Mock the AuthService signIn to return a successful response
+        (authService.signIn as jest.Mock).mockResolvedValue(HttpStatus.OK);
+    
+        await authController.signIn(userDetails, mockResponse as Response);
+    
+        expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.OK);
+    });
+    
+  });
+  
+
+
 });
