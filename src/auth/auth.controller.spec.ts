@@ -75,6 +75,28 @@ describe('AuthController', () => {
     
   });
   
+  // testing authentication get All users method
+  describe('getAllUsers', () => {
+    it('should return an array of users as a JSON string', async () => {
+      const users = [{ email: 'user1@example.com' }, { email: 'user2@example.com' }];
+      (authService.getAllUsers as jest.Mock).mockResolvedValue(users);
+  
+      const result = await authController.getAllUsers();
+  
+      expect(result).toEqual(JSON.stringify(users)); 
+      expect(authService.getAllUsers).toHaveBeenCalled();
+    });
+  
+    it('should return an empty array as a JSON string when no users exist', async () => {
+      const users: any = []; // Empty array for no users
+      (authService.getAllUsers as jest.Mock).mockResolvedValue(users);
+  
+      const result = await authController.getAllUsers();
+  
+      expect(result).toEqual(JSON.stringify(users));
+      expect(authService.getAllUsers).toHaveBeenCalled();
+    });
+  });
 
 
 });
