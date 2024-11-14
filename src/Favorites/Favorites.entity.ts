@@ -1,26 +1,16 @@
-import {
-  JoinTable,
-  ManyToMany,
-  Entity,
-  Column,
-  PrimaryColumn,
-  OneToMany,
-  OneToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 
-//Each entry will be one favorite for a specified user at their user id
 @Entity('Favorite')
 export class Favorite {
   @PrimaryColumn()
-  userId: Number;
+  userID: number;
 
   @Column({ nullable: false })
-  latitude: Number;
+  latitude: number;
 
   @Column({ nullable: false })
-  longitude: Number;
+  longitude: number;
 
   @Column({ nullable: false })
-  zoomLevel: Number;
+  zoomLevel: number;
 }

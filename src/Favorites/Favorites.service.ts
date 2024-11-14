@@ -16,26 +16,57 @@ export class FavoriteService {
     private jwtService: JwtService,
   ) {}
 
-  async getFavoritesForUser(jwtToken: string) {
-    //TODO: Also verify this JWT Token
-    let isTokenInDB = await this.authService.verifyJWTToken(jwtToken);
+  async insertFavoriteForUser(jwtToken: string) {
+    const isTokenInDB = await this.authService.verifyJWTToken(jwtToken);
     if (!isTokenInDB) {
       return null;
     }
 
     const jwtSecret = process.env.JWT_SECRET || '{}';
     try {
-      let decodedJwtToken = await this.jwtService.verify(jwtToken, {
+      const decodedJwtToken = await this.jwtService.verify(jwtToken, {
         secret: jwtSecret,
       });
 
-      const email = decodedJwtToken.email;
-      const userID = decodedJwtToken.userID;
-      const expiryTime = decodedJwtToken.exp;
+      if (!decodedJwtToken) {
+        console.log('Error verifying jwt token');
+        return null;
+      }
 
-      //TODO: Just return all of a users favorites based on their info here make a simple get to the db with the user specified
+      const userID = decodedJwtToken.userID;
+
+      const user = await this.favoriteRepository.find({
+        where: { userID: userID },
+      });
     } catch (error) {
-      console.log('Error verifying jwt token: ' + error);
+      console.log('Error inserting favorites for user: ' + error);
+      return null;
+    }
+  }
+
+  async getFavoritesForUser(jwtToken: string) {
+    const isTokenInDB = await this.authService.verifyJWTToken(jwtToken);
+    if (!isTokenInDB) {
+      return null;
+    }
+
+    const jwtSecret = process.env.JWT_SECRET || '{}';
+    try {
+      const decodedJwtToken = await this.jwtService.verify(jwtToken, {
+        secret: jwtSecret,
+      });
+      if (!decodedJwtToken) {
+        console.log('Error verifying jwt token');
+        return null;
+      }
+
+      const userID = decodedJwtToken.userID;
+
+      return await this.favoriteRepository.find({
+        where: { userID: userID },
+      });
+    } catch (error) {
+      console.log('Error getting favorites for user: ' + error);
       return null;
     }
   }

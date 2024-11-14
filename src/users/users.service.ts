@@ -25,8 +25,8 @@ export class UsersService {
       console.log('Email or password empty');
       return false;
     }
-    let email: string = userEmail;
-    let password: string = pass;
+    const email: string = userEmail;
+    const password: string = pass;
     let hashedPassword: string;
 
     try {
@@ -117,7 +117,7 @@ export class UsersService {
   }
   async storeJWTToken(userEmail, jwtTokenEncoded) {
     try {
-      let user = await this.getUserFromEmail(userEmail);
+      const user = await this.getUserFromEmail(userEmail);
       user.jwtToken = jwtTokenEncoded;
       return this.userRepository.save(user);
     } catch (error) {

@@ -40,9 +40,9 @@ export class AuthService {
 
     const userID = await this.usersService.getUserIdFromEmail(email);
 
-    let payload = {
+    const payload = {
       email: email,
-      userId: userID,
+      userID: userID,
     };
 
     if (verified) {
@@ -60,7 +60,7 @@ export class AuthService {
   async verifyJWTToken(jwtToken) {
     const jwtSecret = process.env.JWT_SECRET || '{}';
     try {
-      let decodedJwtToken = await this.jwtService.verify(jwtToken, {
+      const decodedJwtToken = await this.jwtService.verify(jwtToken, {
         secret: jwtSecret,
       });
       const email = decodedJwtToken.email;
@@ -89,7 +89,7 @@ export class AuthService {
   }
 
   async generateJWTToken(payload) {
-    let signedJWTToken = await this.jwtService.signAsync(payload);
+    const signedJWTToken = await this.jwtService.signAsync(payload);
     return signedJWTToken;
   }
 

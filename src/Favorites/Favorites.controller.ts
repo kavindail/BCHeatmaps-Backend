@@ -1,22 +1,12 @@
-import {
-  Get,
-  Body,
-  Controller,
-  Post,
-  Query,
-  HttpCode,
-  HttpStatus,
-  Res,
-  Req,
-} from '@nestjs/common';
+import { Get, Body, Controller, Post, Res, Req } from '@nestjs/common';
 import { FavoriteService } from './Favorites.service';
 import { Request, Response } from 'express';
 import * as cookie from 'cookie';
 
 type Favorite = {
-  latitude: Number;
-  longitude: Number;
-  zoomLevel: Number;
+  latitude: number;
+  longitude: number;
+  zoomLevel: number;
 };
 
 @Controller('favorite')
@@ -33,6 +23,8 @@ export class FavoritesController {
     console.log('GET made to /favorites');
     const cookies = cookie.parse(req.headers.cookie || '');
     const jwtToken = cookies['token'];
+
+    const favorites = await this.favoriteService.getFavoritesForUser(jwtToken);
 
     if (!jwtToken) {
       return res.status(401).json({ message: 'No jwt token provided' });
