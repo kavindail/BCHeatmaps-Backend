@@ -3,9 +3,13 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Favorite } from './Favorites.entity';
 import { JwtService } from '@nestjs/jwt';
-import * as path from 'path';
-import * as fs from 'fs';
 import { AuthService } from '../auth/auth.service';
+
+type favoriteDto = {
+  latitude: number;
+  longitude: number;
+  zoomLevel: number;
+};
 
 @Injectable()
 export class FavoriteService {
@@ -16,7 +20,7 @@ export class FavoriteService {
     private jwtService: JwtService,
   ) {}
 
-  async insertFavoriteForUser(jwtToken: string) {
+  async insertFavoriteForUser(favorite: favoriteDto, jwtToken: string) {
     const isTokenInDB = await this.authService.verifyJWTToken(jwtToken);
     if (!isTokenInDB) {
       return null;
@@ -35,9 +39,12 @@ export class FavoriteService {
 
       const userID = decodedJwtToken.userID;
 
-      const user = await this.favoriteRepository.find({
-        where: { userID: userID },
+      const favoriteEntity = this.favoriteRepository.create({
+        ...favorite,
+        userID: userID,
       });
+
+      await this.favoriteRepository.save(favoriteEntity);
     } catch (error) {
       console.log('Error inserting favorites for user: ' + error);
       return null;
