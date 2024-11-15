@@ -3,7 +3,6 @@ import {
   Body,
   Controller,
   Post,
-  HttpCode,
   HttpStatus,
   Res,
   Req,
@@ -17,10 +16,6 @@ type UserDetails = {
   password: string;
 };
 
-type jwtToken = {
-  jwtToken: string;
-};
-
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -30,13 +25,13 @@ export class AuthController {
     console.log('POST made to /auth/signup');
 
     //TODO: Instead of modifying signup just send it to login to return
-    let status = await this.authService.signup(
+    const status = await this.authService.signup(
       userDetails.email,
       userDetails.password,
     );
 
     //Also want to log in the user when they sign up so they can get a jwt token
-    let jwtToken = await this.authService.signIn(
+    const jwtToken = await this.authService.signIn(
       userDetails.email,
       userDetails.password,
     );
@@ -77,7 +72,7 @@ export class AuthController {
       return res.status(401).json({ message: 'No jwt token provided' });
     }
 
-    let verified = await this.authService.verifyJWTToken(jwtToken);
+    const verified = await this.authService.verifyJWTToken(jwtToken);
     if (verified) {
       return res
         .status(HttpStatus.OK)
@@ -94,7 +89,7 @@ export class AuthController {
   @Post('login')
   async signIn(@Body() userDetails: UserDetails, @Res() res: Response) {
     console.log('POST made to /auth/login');
-    let jwtToken = await this.authService.signIn(
+    const jwtToken = await this.authService.signIn(
       userDetails.email,
       userDetails.password,
     );

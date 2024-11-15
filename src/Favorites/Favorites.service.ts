@@ -44,7 +44,11 @@ export class FavoriteService {
         userID: userID,
       });
 
-      await this.favoriteRepository.save(favoriteEntity);
+      let savedFavorite = await this.favoriteRepository.save(favoriteEntity);
+      if (!savedFavorite) {
+        return null;
+      }
+      return savedFavorite;
     } catch (error) {
       console.log('Error inserting favorites for user: ' + error);
       return null;
