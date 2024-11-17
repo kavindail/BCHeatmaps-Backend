@@ -45,12 +45,12 @@ describe('AuthController', () => {
       await authController.signUp(userDetails, mockResponse as Response);
 
       expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.CREATED);
-      expect(mockResponse.json).toHaveBeenCalledWith({ message: 'User created succesfully.' });
+      expect(mockResponse.json).toHaveBeenCalledWith({ message: 'User signed up succesfully.' });
     });
 
     it('should return 400 for invalid email', async () => {
       const userDetails = { email: 'invalid-email', password: 'password' };
-      (authService.signup as jest.Mock).mockResolvedValue(HttpStatus.BAD_REQUEST);
+      (authService.signup as jest.Mock).mockResolvedValue(null);
 
       await authController.signUp(userDetails, mockResponse as Response);
 
