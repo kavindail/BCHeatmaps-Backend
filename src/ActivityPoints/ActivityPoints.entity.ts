@@ -15,7 +15,6 @@ export class ActivityPoints {
     this.latitude = latitude;
     this.longitude = longitude;
   }
-
   @PrimaryGeneratedColumn()
   id: number;
 

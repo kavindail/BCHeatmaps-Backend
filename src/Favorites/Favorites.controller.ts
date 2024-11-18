@@ -1,12 +1,20 @@
-import { Get, Body, Controller, Post, Res, Req } from '@nestjs/common';
+import {
+  Get,
+  Body,
+  Controller,
+  Post,
+  Res,
+  Req,
+  HttpStatus,
+} from '@nestjs/common';
 import { FavoriteService } from './Favorites.service';
 import { Request, Response } from 'express';
 import * as cookie from 'cookie';
 
 type favoriteDto = {
-  latitude: number;
-  longitude: number;
-  zoomLevel: number;
+  latitude: Float32Array;
+  longitude: Float32Array;
+  zoomLevel: Float32Array;
 };
 
 @Controller('favorite')
@@ -15,23 +23,36 @@ export class FavoritesController {
 
   @Post()
   async addFavorite(
-    @Req() req: request,
+    @Req() req: Request,
     @Body() favorite: favoriteDto,
     @Res() res: Response,
   ) {
+    console.log('POST made to /favorites');
     const cookies = cookie.parse(req.headers.cookie || '');
     const jwtToken = cookies['token'];
+
+    if (!jwtToken) {
+      return res.status(401).json({ message: 'No jwt token provided' });
+    }
 
     const added = this.favoriteService.insertFavoriteForUser(
       favorite,
       jwtToken,
     );
+
+    if (added) {
+      return res
+        .status(HttpStatus.CREATED)
+        .json({ message: 'Favorite added correctly' });
+    } else {
+      return res
+        .status(HttpStatus.FORBIDDEN)
+        .json({ message: 'Favorite not added' });
+    }
   }
 
   @Get()
   async getFavorites(@Req() req: Request, @Res() res: Response) {
-    //TODO: Return all of a users favorites
-    // The user ID is in the decoded jwt token
     console.log('GET made to /favorites');
     const cookies = cookie.parse(req.headers.cookie || '');
     const jwtToken = cookies['token'];
@@ -40,6 +61,14 @@ export class FavoritesController {
 
     if (!jwtToken) {
       return res.status(401).json({ message: 'No jwt token provided' });
+    }
+
+    if (favorites) {
+      return res.status(HttpStatus.OK).json({ favorites });
+    } else {
+      return res
+        .status(HttpStatus.FORBIDDEN)
+        .json({ message: 'Error retrieving favorites' });
     }
   }
 }

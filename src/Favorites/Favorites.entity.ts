@@ -1,16 +1,19 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('Favorite')
 export class Favorite {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
   userID: number;
 
-  @Column({ nullable: false })
-  latitude: number;
+  @Column({ type: 'double precision', nullable: false })
+  latitude: Float32Array;
 
-  @Column({ nullable: false })
-  longitude: number;
+  @Column({ type: 'double precision', nullable: false })
+  longitude: Float32Array;
 
-  @Column({ nullable: false })
-  zoomLevel: number;
+  @Column({ type: 'double precision', nullable: false })
+  zoomLevel: Float32Array;
 }

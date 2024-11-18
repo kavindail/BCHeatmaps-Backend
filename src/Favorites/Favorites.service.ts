@@ -6,9 +6,9 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth/auth.service';
 
 type favoriteDto = {
-  latitude: number;
-  longitude: number;
-  zoomLevel: number;
+  latitude: Float32Array;
+  longitude: Float32Array;
+  zoomLevel: Float32Array;
 };
 
 @Injectable()
@@ -44,10 +44,15 @@ export class FavoriteService {
         userID: userID,
       });
 
-      let savedFavorite = await this.favoriteRepository.save(favoriteEntity);
+      console.log('Adding favorite', favoriteEntity);
+      const savedFavorite = await this.favoriteRepository.save(favoriteEntity);
+      console.log('Favorite added: ', savedFavorite);
+
       if (!savedFavorite) {
+        console.log('Error inserting favorite');
         return null;
       }
+
       return savedFavorite;
     } catch (error) {
       console.log('Error inserting favorites for user: ' + error);
@@ -73,9 +78,12 @@ export class FavoriteService {
 
       const userID = decodedJwtToken.userID;
 
-      return await this.favoriteRepository.find({
+      const favorites = await this.favoriteRepository.find({
         where: { userID: userID },
       });
+
+      console.log('favorites, ', favorites);
+      return favorites;
     } catch (error) {
       console.log('Error getting favorites for user: ' + error);
       return null;
