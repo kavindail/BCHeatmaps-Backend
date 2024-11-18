@@ -65,38 +65,37 @@ describe('AuthService', () => {
     });
   });
 
-  // describe('signIn', () => {
-  //   it('should return 200 and generate JWT token if credentials are valid', async () => {
-  //     mockUsersService.verifyUserCredentials.mockResolvedValue(true);
-  //     mockUsersService.getUserIdFromEmail.mockResolvedValue('mocked-user-uuid'); 
-  //     mockJwtService.signAsync.mockResolvedValue('mocked-jwt-token');
-  //     mockUsersService.storeJWTToken.mockResolvedValue(undefined);
+  describe('signIn', () => {
+    it('should return 200 and generate JWT token if credentials are valid', async () => {
+      mockUsersService.verifyUserCredentials.mockResolvedValue(true);
+      mockJwtService.signAsync.mockResolvedValue('mocked-jwt-token');
+      mockUsersService.storeJWTToken.mockResolvedValue(undefined);
 
-  //     const result = await authService.signIn('test@example.com', 'password');
+      const result = await authService.signIn('test@example.com', 'password');
 
-  //     expect(mockUsersService.verifyUserCredentials).toHaveBeenCalledWith(
-  //       'test@example.com',
-  //       'password',
-  //     );
-  //     expect(mockUsersService.getUserIdFromEmail).toHaveBeenCalledWith('test@example.com');
-  //     expect(mockJwtService.signAsync).toHaveBeenCalledWith({
-  //       email: 'test@example.com',
-  //     });
-  //     expect(mockUsersService.storeJWTToken).toHaveBeenCalledWith(
-  //       'test@example.com',
-  //       'mocked-jwt-token',
-  //     );
-  //     expect(result).toEqual(HttpStatus.OK);
-  //   });
+      expect(mockUsersService.verifyUserCredentials).toHaveBeenCalledWith(
+        'test@example.com',
+        'password',
+      );
 
-  //   it('should return 401 if credentials are invalid', async () => {
-  //     mockUsersService.verifyUserCredentials.mockResolvedValue(false);
+      expect(mockJwtService.signAsync).toHaveBeenCalledWith({
+        email: 'test@example.com',
+      });
+      expect(mockUsersService.storeJWTToken).toHaveBeenCalledWith(
+        'test@example.com',
+        'mocked-jwt-token',
+      );
+      expect(result).toEqual('mocked-jwt-token');
+    });
 
-  //     const result = await authService.signIn('test@example.com', 'wrong-password');
+    it('should return 401 if credentials are invalid', async () => {
+      mockUsersService.verifyUserCredentials.mockResolvedValue(false);
 
-  //     expect(result).toEqual(HttpStatus.UNAUTHORIZED);
-  //   });
-  // });
+      const result = await authService.signIn('test@example.com', 'wrong-password');
+
+      expect(result).toBeNull();
+    });
+  });
 
   describe('getAllUsers', () => {
     it('should return a list of users', async () => {
