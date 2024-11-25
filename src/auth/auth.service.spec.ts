@@ -13,6 +13,7 @@ describe('AuthService', () => {
   const mockUsersService = {
     createUser: jest.fn(),
     verifyUserCredentials: jest.fn(),
+    getUserIdFromEmail: jest.fn(),
     getAllUsers: jest.fn(),
     checkJWTAgainstDB: jest.fn(),
     storeJWTToken: jest.fn(),
@@ -38,9 +39,9 @@ describe('AuthService', () => {
   });
 
   describe('signup', () => {
-    it('should return 400 for invalid email', async () => {
+    it('should return false for invalid email', async () => {
       const result = await authService.signup('invalid-email', 'password');
-      expect(result).toEqual(HttpStatus.BAD_REQUEST);
+      expect(result).toEqual(false);
     });
 
     it('should call createUser and return the result from it', async () => {
@@ -52,7 +53,7 @@ describe('AuthService', () => {
         'test@example.com',
         'password',
       );
-      expect(result).toEqual(HttpStatus.CREATED);
+      expect(result).toEqual(true);
     });
 
     it('should return 400 if user creation fails', async () => {
@@ -60,7 +61,7 @@ describe('AuthService', () => {
 
       const result = await authService.signup('test@example.com', 'password');
 
-      expect(result).toEqual(HttpStatus.BAD_REQUEST);
+      expect(result).toEqual(false);
     });
   });
 
@@ -76,6 +77,7 @@ describe('AuthService', () => {
         'test@example.com',
         'password',
       );
+
       expect(mockJwtService.signAsync).toHaveBeenCalledWith({
         email: 'test@example.com',
       });
@@ -83,7 +85,7 @@ describe('AuthService', () => {
         'test@example.com',
         'mocked-jwt-token',
       );
-      expect(result).toEqual(HttpStatus.OK);
+      expect(result).toEqual('mocked-jwt-token');
     });
 
     it('should return 401 if credentials are invalid', async () => {
@@ -91,7 +93,7 @@ describe('AuthService', () => {
 
       const result = await authService.signIn('test@example.com', 'wrong-password');
 
-      expect(result).toEqual(HttpStatus.UNAUTHORIZED);
+      expect(result).toBeNull();
     });
   });
 
@@ -122,7 +124,7 @@ describe('AuthService', () => {
       
       const result = await authService.verifyJWTToken('invalid-jwt-token');
 
-      expect(result).toBe(HttpStatus.UNAUTHORIZED);
+      expect(result).toBe(false);
     });
 
     it('should return false if JWT token is expired', async () => {
