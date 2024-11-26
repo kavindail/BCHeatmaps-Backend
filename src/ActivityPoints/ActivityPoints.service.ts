@@ -39,7 +39,7 @@ export class ActivityPointsService {
   }
 
   async readTextFile(file, callback) {
-    var rawFile = new XMLHttpRequest();
+    let rawFile = new XMLHttpRequest();
     rawFile.overrideMimeType('application/json');
     rawFile.open('GET', file, true);
     rawFile.onreadystatechange = function () {
@@ -56,48 +56,36 @@ export class ActivityPointsService {
     const activeCoords = await JSON.parse(fullJson);
 
     for (let i = 0; i < activeCoords.boards.length; i++) {
-      let boards = activeCoords.boards[i];
+      const boards = activeCoords.boards[i];
       for (let j = 0; j < boards.classes.length; j++) {
-        let classes = boards.classes[j];
+        const classes = boards.classes[j];
         if (classes.name == 'residential') {
           for (let k = 0; k < classes.areas.length; k++) {
-            let areas = classes.areas[k];
+            const areas = classes.areas[k];
             for (let m = 0; m < areas.cities.length; m++) {
-              let cities = areas.cities[m];
-              let activeCount = cities.activeCount;
+              const cities = areas.cities[m];
+              const activeCount = cities.activeCount;
               if (cities.state == 'Ontario' && activeCount > 0) {
                 // console.log('city name:' + cities.name);
                 const cityLatitude = cities.location['lat'];
                 const cityLongitude = cities.location['lng'];
-                let cityPoint = new ActivityPoints(cityLatitude, cityLongitude);
+                const cityPoint = new ActivityPoints(
+                  cityLatitude,
+                  cityLongitude,
+                );
                 await this.create(cityPoint);
 
-                // console.log(
-                //   'city latitude: ' +
-                //     cityLatitude +
-                //     'city longitude: ' +
-                //     cityLongitude,
-                // );
-
                 for (let l = 0; l < cities.neighborhoods.length; l++) {
-                  let neighborhoods = cities.neighborhoods[l];
+                  const neighborhoods = cities.neighborhoods[l];
 
-                  // console.log('neighbourhood name:' + neighborhoods.name);
                   const neighborhoodLongitude = neighborhoods.location['lat'];
                   const neighborhoodLatitude = neighborhoods.location['lng'];
 
-                  let neighbourhoodPoint = new ActivityPoints(
+                  const neighbourhoodPoint = new ActivityPoints(
                     neighborhoodLatitude,
                     neighborhoodLongitude,
                   );
                   await this.create(neighbourhoodPoint);
-
-                  // console.log(
-                  //   'neighborhood latitude: ' +
-                  //     neighborhoodLatitude +
-                  //     'neighborhood longitude: ' +
-                  //     neighborhoodLongitude,
-                  // );
                 }
               }
             }

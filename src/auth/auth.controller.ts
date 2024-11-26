@@ -30,7 +30,6 @@ export class AuthController {
       userDetails.password,
     );
 
-    //Also want to log in the user when they sign up so they can get a jwt token
     const jwtToken = await this.authService.signIn(
       userDetails.email,
       userDetails.password,
@@ -78,8 +77,6 @@ export class AuthController {
         .status(HttpStatus.OK)
         .json({ message: 'JWT Token has been verified.' });
     } else {
-      //TODO: This should trigger a delete of the token on the frontend,
-      //the jwt token is invalid, another login attempt should be made
       return res
         .status(HttpStatus.UNAUTHORIZED)
         .json({ message: 'JWT Token invalid' });
@@ -103,7 +100,7 @@ export class AuthController {
         httpOnly: true,
         secure: false, //TODO: Set to true in https prod environment
         sameSite: 'none', //TODO: Set to strict or lax in prod environment
-        maxAge: 100 * 60 * 60 * 1000, //100 hours
+        maxAge: 100 * 60 * 60 * 1000,
       });
       return res
         .status(HttpStatus.OK)
