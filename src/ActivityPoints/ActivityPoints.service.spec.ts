@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ActivityPointsService } from './activityPoints.service'; // Adjust path as needed
+import { ActivityPointsService } from './ActivityPoints.service';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ActivityPoints } from './ActivityPoints.entity';
