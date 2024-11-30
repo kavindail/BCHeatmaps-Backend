@@ -1,20 +1,20 @@
-curl -X POST http://localhost:3000/activityPoints
--H "Content-Type: application/json"
--d '{"latitude": "4", "longitude": "5"}'
+** Instructions on running the Application**
 
-curl --request GET \
- --url https://api.repliers.io/listings/locations \
- --header 'REPLIERS-API-KEY: d1E4q131b04XKIDlQ9A0WhhSu9asDG' \
- --header 'accept: application/json'
+## Prerequisites
 
-curl -X POST http://localhost:3000/activityPoints/activeCoordinates | jq .
+- Install [Docker](https://www.docker.com/) and ensure it is running.
+- Install [Node.js](https://nodejs.org/) (version 18 or higher is recommended).
 
-curl -X GET http://localhost:3000/activityPoints | jq .
+Once all prerequisites are met and project is pulled, run the following command to obtain all the necessary dependancies:
 
-curl -X DELETE http://localhost:3000/activityPoints | jq .
+npm install
 
-curl -X POST http://localhost:3000/auth/signup \
--H "Content-Type: application/json" \
--d '{"email": "testser@email.com", "password": "testPassword"}'
+Run the following command to build the Docker images and start the containers:
 
-http://localhost:3000/auth/login
+docker-compose up --build
+
+After the backend is running, use the following curl command to pull activity points from the external API and store them in the local database:
+
+curl -X POST http://localhost:3000/activityPoints/activeCoordinates
+
+Once the above steps are completed, the backend should be running and ready to interact with the frontend application.
