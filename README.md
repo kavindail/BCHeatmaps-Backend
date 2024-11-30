@@ -17,4 +17,4 @@ After the backend is running, use the following curl command to pull activity po
 
 curl -X POST http://localhost:3000/activityPoints/activeCoordinates
 
-Once the above steps are completed, the backend should be running and ready to interact with the frontend application.
+Once the above steps are completed, the backend should be running and ready to interact with the frontend application!
